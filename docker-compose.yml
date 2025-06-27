@@ -1,0 +1,38 @@
+services:
+  apipedidos: # Nome do serviço
+      container_name: api-pedidos-springboot # Nome do container
+      build:
+         context: . #Raiz do projeto
+         dockerfile: Dockerfile #Ler o arquivo Dockerfile
+      ports:
+         - "8081:8081" #Portas externa e interna
+      networks:
+         - apipedidos-network # Nome da rede compartilhada
+      depends_on:
+         - postgres #Nome do serviço que iremos aguardar para executar a API
+      environment:
+         SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_apipedidos
+         SPRING_DATASOURCE_USERNAME: usuario_apipedidos
+         SPRING_DATASOURCE_PASSWORD: senha_apipedidos
+  postgres: # Nome do serviço
+      image: postgres:16 # Imagem oficial do postgresql versão 16
+      container_name: api-pedidos-postgresql # Nome do container
+      restart: always # Sempre reiniciar o container quando ele parar
+      environment:
+          POSTGRES_USER: usuario_apipedidos # Nome do usuário administrador
+          POSTGRES_PASSWORD: senha_apipedidos # Senha do usuário
+          POSTGRES_DB: bd_apipedidos # Nome do banco de dados
+      ports:
+         - "5436:5432" # Porta externa para a máquina / porta interna do container
+      volumes:
+         - postgres_data:/var/lib/postgresql/data #Local dentro do container para armazenar os dados
+      networks:
+         - apipedidos-network # Nome da rede compartilhada
+volumes:
+  postgres_data: # Registrando o volume para armazenar os dados
+networks:
+  apipedidos-network: # Nome da rede
+     driver: bridge # Rede compartilhada
+ 
+
+
