@@ -10,10 +10,12 @@ services:
          - apipedidos-network # Nome da rede compartilhada
       depends_on:
          - postgres #Nome do serviço que iremos aguardar para executar a API
+         - rabbitmq # Também aguardamos o serviço do RabbitMQ
       environment:
          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_apipedidos
          SPRING_DATASOURCE_USERNAME: usuario_apipedidos
          SPRING_DATASOURCE_PASSWORD: senha_apipedidos
+         SPRING_RABBITMQ_HOST: rabbitmq # Host do RabbitMQ (nome do serviço)
   postgres: # Nome do serviço
       image: postgres:16 # Imagem oficial do postgresql versão 16
       container_name: api-pedidos-postgresql # Nome do container
@@ -28,6 +30,18 @@ services:
          - postgres_data:/var/lib/postgresql/data #Local dentro do container para armazenar os dados
       networks:
          - apipedidos-network # Nome da rede compartilhada
+  rabbitmq: # Nome do serviço
+    image: rabbitmq:3-management # Imagem oficial do RabbitMQ com painel de administração
+    container_name: api-pedidos-rabbitmq # Nome do container
+    ports:
+      - "5672:5672" # Porta padrão para comunicação com aplicações
+      - "15672:15672" # Porta para acessar o painel web do RabbitMQ
+    environment:
+      RABBITMQ_DEFAULT_USER: guest # Usuário padrão
+      RABBITMQ_DEFAULT_PASS: guest # Senha padrão
+    networks:
+      - apipedidos-network # Nome da rede compartilhada
+
 volumes:
   postgres_data: # Registrando o volume para armazenar os dados
 networks:

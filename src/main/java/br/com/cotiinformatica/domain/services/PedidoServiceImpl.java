@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import br.com.cotiinformatica.components.MessageProducerComponent;
 import br.com.cotiinformatica.domain.dtos.requests.PedidoRequest;
 import br.com.cotiinformatica.domain.dtos.responses.PedidoResponse;
 import br.com.cotiinformatica.domain.entities.Pedido;
@@ -22,10 +23,39 @@ public class PedidoServiceImpl implements PedidoService {
 
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private MessageProducerComponent messageProducerComponent;
+	
+	public PedidoRepository getPedidoRepository() {
+		return pedidoRepository;
+	}
+
+	public void setPedidoRepository(PedidoRepository pedidoRepository) {
+		this.pedidoRepository = pedidoRepository;
+	}
+
+	public ModelMapper getModelMapper() {
+		return modelMapper;
+	}
+
+	public void setModelMapper(ModelMapper modelMapper) {
+		this.modelMapper = modelMapper;
+	}
+
+	public MessageProducerComponent getMessageProducerComponent() {
+		return messageProducerComponent;
+	}
+
+	public void setMessageProducerComponent(MessageProducerComponent messageProducerComponent) {
+		this.messageProducerComponent = messageProducerComponent;
+	}
+
 	@Override
 	public PedidoResponse criar(PedidoRequest request) {
 		var pedido = modelMapper.map(request, Pedido.class);
 		pedidoRepository.save(pedido);
+		messageProducerComponent.send(pedido);
 
 		return modelMapper.map(pedido, PedidoResponse.class);
 	}

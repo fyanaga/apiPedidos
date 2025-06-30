@@ -30,6 +30,6 @@ public class PedidoRequest {
 	
 	@NotNull(message = "O status é obrigatório.")
 	@Min(value = 0, message = "O status mínimo permitido é 0.")
-	@Max(value = 0, message = "O status máximo permitido é 4.")
+	@Max(value = 4, message = "O status máximo permitido é 4.")
 	private Integer status;
 }
