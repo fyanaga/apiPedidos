@@ -20,13 +20,7 @@ public class MessageProducerComponent {
 	@Autowired
 	private ObjectMapper objectMapper;
 	
-	public void send(Pedido pedido) {
-		try {
-			var json = objectMapper.writeValueAsString(pedido); //serializando em JSON
-			rabbitTemplate.convertAndSend(queue.getName(), json); //gravando na fila
-		}
-		catch(Exception ex) {
-			ex.printStackTrace();
-		}
+	public void send(String message) throws Exception {
+		rabbitTemplate.convertAndSend(queue.getName(), message); //gravando na fila
 	}
 }
